@@ -8,6 +8,10 @@ import categoryRouter from "./routes/categoryRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import uploadRouter from "./routes/uploadRoute.js";
 import path from "path";
+import morgan from "morgan";
+import helmet from "helmet";
+import xss from "xss-clean";
+import hpp from "hpp";
 
 dotenv.config();
 
@@ -19,6 +23,13 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev")); // Use morgan middleware for logging in development environment
+}
+app.use(helmet()); // Use helmet middleware to set security-related HTTP headers
+app.use(xss()); // Use xss-clean middleware to sanitize user input and prevent XSS attacks
+app.use(hpp()); // Use hpp middleware to protect against HTTP Parameter Pollution attacks
 
 app.use("/api/users", userRouter);
 app.use("/api/categories", categoryRouter);
